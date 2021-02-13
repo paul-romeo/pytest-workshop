@@ -1,0 +1,114 @@
+[pytest_workshop]
+###################################################################
+# pytest.init #
+###################################################################
+minversion = 2.0
+norecurs
+edirs = .git .tox requirements* venv3
+python_files = test*.py
+addopts = -p nowarnings		# disable warnings in pytest 
+
+###################################################################
+# execute specific tests #
+###################################################################
+# execute all test functions with label "add"
+pytest -v -k "add" 
+
+# execute all test functions with labels "add" or label "string" 
+pytest -v -k "add or string" 
+
+# execute only test functions with label containining both "add" and "string" 
+pytest -v -k "add and string" 
+
+# execute all test functions until the first occurrence of failure 
+pytest -v -x 
+(or) 
+pytest -v --tb=no 
+
+# execute all test functions until the second occurrence of failure 
+pytest -v --maxfail=2 
+
+
+###################################################################
+# Mark individual tests #
+###################################################################
+@pytest.mark.number		# mark specific test function as number 
+@pytest.mark.strings	# mark specific test function as strings 
+@pytest.mark.skip(reason="do not run this test")
+
+# skip the test function if python is prior to version 3.3 
+import sys 
+@pytest.mark.skipif(sys.version_info < (3,3), reason="do not run this test")
+
+
+# Use "parametrize" for group testing 
+import pytest 
+
+@pytest.mark.parametrize('value1, value2, result', 
+	# (value1, value2, result)
+	[ (7,3,10),
+	  ("Hello", " World!", "Hello World!"),
+	  (10.5,25.5,36.0)	
+	])
+	
+def testGroup(value1, value2, result): 
+	assert app.func(value1, value2) == result 
+
+
+@pytest.fixture(module)
+def db(): 
+	print("---setup---")
+	db = StudentDB() 
+	db.connect("data.json")
+	yield db
+	
+	print("---teardown---")
+	db.close()
+	
+	
+def testScottData(db): 
+	def testScottData(db):
+    scottData = db.getData("Scott")
+
+    assert scottData["id"] == 1
+    assert scottData["name"] == "Scott"
+    assert scottData["result"] == "pass"
+
+###################################################################
+# execute specific tests with marking #
+###################################################################
+# execute pytest for all test functions with @pytest.mark.number
+pytest -v -m number 	
+
+# execute pytest for all test functions with @pytest.mark.strings
+pytest -v -m strings 	
+
+# execute pytest: skip specific test functions and show test summary 
+pytest -v -rsx 
+
+# execute print statement in the test function using -s 
+pytest -v -s 
+(or)
+pytest -v --capture=no 
+
+# execute only the summary of tests: # of passes and # of fails
+pytest -v -q 
+
+###################################################################
+# Configure pytest for Visual Studio Code IDE
+###################################################################
+[Install the Python interpreter]
+1. Open Command Palette (ctrl +shift +P) and 
+2. Start typing ‘python: select interpreter.’It will display a list of available Python environments. 
+3. Click "Python: Linting and Debugging..." 
+
+[Install pytest]
+1. Open Command Palette (ctrl +shift +P) and start typing "Python: Configure Tests."
+2. Click "pytest: pytest pytest framework" 
+
+
+	
+[Run all tests]
+
+
+
